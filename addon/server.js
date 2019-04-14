@@ -1,6 +1,5 @@
 /* eslint no-console: 0 */
 
-import { Promise } from 'rsvp';
 import { singularize, pluralize, camelize } from './utils/inflector';
 import { toCollectionName, toInternalCollectionName } from 'ember-cli-mirage/utils/normalize-name';
 import { getModels } from './ember-data';
@@ -857,12 +856,12 @@ export default class Server {
     return this.pretender[verb](
       fullPath,
       (request) => {
-        return new Promise(resolve => {
-          Promise.resolve(routeHandler.handle(request)).then(mirageResponse => {
+        return routeHandler.handle(request)
+          .then(mirageResponse => {
             let [ code, headers, response ] = mirageResponse;
-            resolve([ code, headers, this._serialize(response) ]);
+
+            return [ code, headers, this._serialize(response) ];
           });
-        });
       },
       timing
     );
